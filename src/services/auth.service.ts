@@ -20,11 +20,4 @@ export const authService = {
     const ok = await verifyPassword(password, user.password_hash);
     return ok ? user : null;
   },
-
-  async signIn(email: string, password: string, remember: boolean) {
-    const user = await this.verifyCredentials(email, password);
-    if (!user) throw new Error('Invalid credentials');
-    const session = await sessionService.createSession(user.id, remember);
-    return { user, session };
-  },
 };

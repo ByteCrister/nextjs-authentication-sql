@@ -1,4 +1,6 @@
+// /sign-in
 'use client';
+
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -27,9 +29,9 @@ export function SignUpForm() {
   return stage === 'form' ? (
     <form onSubmit={onSubmit} className="space-y-4">
       {error && <div className="text-red-600 text-sm">{error}</div>}
-      <div><label className="block text-sm mb-1">Email</label><Input type="email" value={email} onChange={e=>setEmail(e.target.value)} required /></div>
-      <div><label className="block text-sm mb-1">Name</label><Input value={name} onChange={e=>setName(e.target.value)} required /></div>
-      <div><label className="block text-sm mb-1">Password</label><Input type="password" value={password} onChange={e=>setPassword(e.target.value)} required /></div>
+      <div><label className="block text-sm mb-1">Email</label><Input type="email" value={email} onChange={e => setEmail(e.target.value)} required /></div>
+      <div><label className="block text-sm mb-1">Name</label><Input value={name} onChange={e => setName(e.target.value)} required /></div>
+      <div><label className="block text-sm mb-1">Password</label><Input type="password" value={password} onChange={e => setPassword(e.target.value)} required /></div>
       <div className="flex items-center gap-2">
         <input id="remember" type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
         <label htmlFor="remember" className="text-sm">Remember me</label>
@@ -37,6 +39,10 @@ export function SignUpForm() {
       <Button type="submit">Create account</Button>
     </form>
   ) : (
-    <OtpVerificationCard email={email} />
+    <OtpVerificationCard
+      email={email}
+      password={password}
+      remember={remember}
+    />
   );
 }

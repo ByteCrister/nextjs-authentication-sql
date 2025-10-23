@@ -3,18 +3,37 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { axios } from '@/lib/axios';
 import { OtpInput } from '../ui/input-otp';
+import { signIn } from 'next-auth/react';
 
-export function OtpVerificationCard({ email }: { email: string }) {
+export function OtpVerificationCard({ email, password, remember }: { email: string; password: string; remember: boolean; }) {
   const [otp, setOtp] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>('We sent a verification code to your email.');
   const [loading, setLoading] = useState(false);
 
   async function verify() {
-    setLoading(true); setError(null);
+    setLoading(true);
+    setError(null);
+
     try {
+      // Verify OTP via your API
       await axios.post('/api/auth/verify-email-otp', { email, otp });
-      window.location.href = '/';
+
+      // Sign in the user using NextAuth Credentials provider
+      const res = await signIn('credentials', {
+        redirect: false,  // handle redirect manually
+        email,
+        password,
+        remember,
+        callbackUrl: '/', // redirect after successful login
+      });
+
+      if (res?.error) {
+        setError(res.error);
+      } else {
+        // Redirect manually
+        window.location.href = res?.url || '/';
+      }
     } catch (err: any) {
       setError(err.response?.data?.error?.message || 'Failed to verify OTP');
     } finally {
@@ -23,7 +42,8 @@ export function OtpVerificationCard({ email }: { email: string }) {
   }
 
   async function resend() {
-    setLoading(true); setError(null);
+    setLoading(true);
+    setError(null);
     try {
       await axios.post('/api/auth/request-email-otp', { email });
       setInfo('OTP resent. Check your inbox.');
